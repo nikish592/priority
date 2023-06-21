@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package ggAdNet.protobuf;
+
+message Geo {
+
+    message GeoName {
+        uint32 id = 1;
+        string key = 2;
+        string name = 3;
+        string name_en = 4;
+    }
+
+    message IPv4Range {
+        uint32 from  = 1;
+        uint32 to = 2;
+        uint32 country_id = 3;
+        uint32 state_id = 4;
+        uint32 city_id = 5;
+        string country_key = 6;
+        string state_key = 7;
+        string city_name = 8;
+    }
+
+    message IPv6Range {
+        uint64 from_hi  = 1;
+        uint64 from_lo  = 2;
+        uint64 to_hi  = 3;
+        uint64 to_lo  = 4;
+        uint32 country_id = 5;
+        uint32 state_id = 6;
+        uint32 city_id = 7;
+        string country_key = 8;
+        string state_key = 9;
+        string city_name = 10;
+    }
+
+    repeated GeoName countries = 1;
+    repeated GeoName states = 2;
+    repeated GeoName cities = 3;
+    repeated IPv4Range ipsv4 = 4;
+    repeated IPv6Range ipsv6 = 5;
+}
