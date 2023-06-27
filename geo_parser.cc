@@ -7,11 +7,13 @@
 #include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
 
+
 #include "base/exceptions.h"
 #include "base/file_utils.h"
 #include "base/geo_db.h"
 #include "base/log.h"
 #include "base/utils.h"
+#include "base/iso2Toiso3.h"
 
 using namespace ggAdNet;
 using namespace ggAdNet::Tools;
@@ -228,7 +230,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
             country.store = true;
             countries_[key] = country;
             location.countryId = country.id;
-            location.country_key = CString(key);
+            location.countryKey.assign(values[4].data, values[4].size);
         } else {
             if (!values[5].empty()) {
                 if (values[5] != icountry->second.name) {
@@ -241,7 +243,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                 }
             }
             location.countryId = icountry->second.id;
-            location.country_key = CString(key);
+            location.countryKey.assign(values[4].data, values[4].size);
         }
         /*  process state  */
         if (values[6].size != 0) {
@@ -269,7 +271,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                 state.store = true;
                 states_[key] = state;
                 location.stateId = state.id;
-                location.state_key = CString(values[6].data);
+                location.stateKey = std::string(values[6].data, values[6].size);
             } else {
                 if (!values[7].empty()) {
                     if (values[7] != istate->second.name) {
@@ -282,7 +284,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                     }
                 }
                 location.stateId = istate->second.id;
-                location.state_key = CString(values[6].data);
+                location.stateKey = values[6].data;
             }
             /*  process city  */
             if (values[10].size != 0) {
@@ -299,7 +301,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                     city.name.assign(values[10].data, values[10].size);
                     if (en) {
                         city.nameEn.assign(values[10].data, values[10].size);
-                        location.city_name =  CString(city.nameEn);
+                        location.cityName = city.nameEn;
                     }
                     city.weight = city.id;
                     city.store = true;
@@ -314,7 +316,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                         if (en && values[10] != icity->second.nameEn) {
                             icity->second.nameEn.assign(values[10].data, values[10].size);
                             icity->second.store = true;
-                            location.city_name = CString(icity->second.nameEn);
+                            location.cityName = icity->second.nameEn;
                         }
                     }
                     location.cityId = icity->second.id;
@@ -400,9 +402,9 @@ GeoParser::loadIPv4Blocks()
         r->set_country_id(it->second.countryId);
         r->set_state_id(it->second.stateId);
         r->set_city_id(it->second.cityId);
-        r->set_country_key(it->second.country_key);
-        r->set_state_key(it->second.state_key);
-        r->set_city_name(it->second.city_name);
+        r->set_country_key(codeTransf.at(it->second.countryKey));
+        r->set_state_key(it->second.stateKey);
+        r->set_city_name(it->second.cityName);
         line++;
     }
 }
@@ -479,9 +481,9 @@ GeoParser::loadIPv6Blocks()
         r->set_country_id(it->second.countryId);
         r->set_state_id(it->second.stateId);
         r->set_city_id(it->second.cityId);
-        r->set_country_key(it->second.country_key);
-        r->set_state_key(it->second.state_key);
-        r->set_city_name(it->second.city_name);
+        r->set_country_key(codeTransf.at(it->second.countryKey));
+        r->set_state_key(it->second.stateKey);
+        r->set_city_name(it->second.cityName);
         line++;
     }
 }
@@ -495,7 +497,7 @@ GeoParser::saveGeoDb()
             const auto& country = it.second;
             auto r = geodb_.add_countries();
             r->set_id(country.id);
-            r->set_key(country.key);
+            r->set_key(codeTransf.at(country.key));
             r->set_name(country.name);
             r->set_name_en(country.nameEn);
         }

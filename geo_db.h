@@ -6,6 +6,8 @@
 #include <map>
 #include <mutex>
 #include <unordered_map>
+#include <set>
+#include <unordered_set>
 #include <thread>
 
 #include "rapidjson/document.h"
@@ -63,22 +65,22 @@ public:
         unsigned int countryId;
         unsigned int stateId;
         unsigned int cityId;
-        CString country_key;
-        CString state_key;
-        CString city_name;
+        CString countryKey;
+        CString stateKey;
+        CString cityName;
 
-        Element() : countryId(0), stateId(0), cityId(0), country_key(""), state_key(""), city_name("") {}
+        Element() : countryId(0), stateId(0), cityId(0) {}
 
-        Element(unsigned int countryId, unsigned int stateId, unsigned int cityId, CString country, CString state, CString city)
-            : countryId(countryId), stateId(stateId), cityId(cityId), country_key(country), state_key(state), city_name(city) {}
+        Element(unsigned int countryId, unsigned int stateId, unsigned int cityId, const std::string& country, const std::string& state, const std::string& city)
+            : countryId(countryId), stateId(stateId), cityId(cityId), countryKey(country), stateKey(state), cityName(city) {}
 
         void clear() {
             countryId = 0;
             stateId = 0;
             cityId = 0;
-            country_key = "";
-            state_key = "";
-            city_name = "";
+            countryKey.clear();
+            stateKey.clear();
+            cityName.clear();
         }
     };
 
@@ -221,19 +223,72 @@ private:
         }
 
         void addRange(IPv4 from, IPv4 to, unsigned int countryId, unsigned int stateId, unsigned int cityId,
-                CString country_key, CString state_key, CString city_name) {
-            ipv4_[to] = {from, to, {countryId, stateId, cityId, country_key, state_key, city_name}};
+                const std::string& countryKey, const std::string& stateKey, const std::string& cityName) {
+            auto findCo = countryKeys_.find(countryKey);
+            Element el;
+            if (findCo != countryKeys_.end()) {
+                el.countryKey = *findCo;
+            } else {
+                auto p = countryKeys_.insert(countryKey);
+                el.countryKey = *p.first;
+            }
+            auto findSt = stateKeys_.find(stateKey);
+            if (findSt != stateKeys_.end()) {
+                el.stateKey = *findSt;
+            } else {
+                auto p = stateKeys_.insert(stateKey);
+                el.stateKey = *p.first;
+            }
+            auto findCi = cityNames_.find(cityName);
+            if (findCi != cityNames_.end()) {
+                el.cityName = *findCi;
+            } else {
+                auto p = cityNames_.insert(cityName);
+                el.cityName = *p.first;
+            }
+            el.countryId = countryId;
+            el.stateId = stateId;
+            el.cityId = cityId;
+            ipv4_[to] = {from, to, el};
         }
 
         void addRange(IPv6 from, IPv6 to, unsigned int countryId, unsigned int stateId, unsigned int cityId,
-                CString country_key, CString state_key, CString city_name) {
-            ipv6_[to] = {from, to, {countryId, stateId, cityId, country_key, state_key, city_name}};
+                const std::string& countryKey, const std::string& stateKey, const std::string& cityName) {
+            auto findCo = countryKeys_.find(countryKey);
+            Element el;
+            if (findCo != countryKeys_.end()) {
+                el.countryKey = *findCo;
+            } else {
+                auto p = countryKeys_.insert(countryKey);
+                el.countryKey = *p.first;
+            }
+            auto findSt = stateKeys_.find(stateKey);
+            if (findSt != stateKeys_.end()) {
+                el.stateKey = *findSt;
+            } else {
+                auto p = stateKeys_.insert(stateKey);
+                el.stateKey = *p.first;
+            }
+            auto findCi = cityNames_.find(cityName);
+            if (findCi != cityNames_.end()) {
+                el.cityName = *findCi;
+            } else {
+                auto p = cityNames_.insert(cityName);
+                el.cityName = *p.first;
+            }
+            el.countryId = countryId;
+            el.stateId = stateId;
+            el.cityId = cityId;
+            ipv6_[to] = {from, to, el};
         }
 
     private:
         Element empty_;
         std::map<IPv4, IPv4Data> ipv4_;
         std::map<IPv6, IPv6Data> ipv6_;
+        std::unordered_set<std::string> stateKeys_;
+        std::unordered_set<std::string> cityNames_;
+        std::set<std::string> countryKeys_;
     };
 
 

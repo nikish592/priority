@@ -203,13 +203,13 @@ GeoDb::loadDb() const
     auto db = std::make_shared<Db>();
     for (int i = 0; i < geo.ipsv4_size(); i++) {
         const auto& e = geo.ipsv4(i);
-        db->addRange(e.from(), e.to(), e.country_id(), e.state_id(), e.city_id(), CString(e.country_key()), CString(e.state_key()), CString(e.city_name()));
+        db->addRange(e.from(), e.to(), e.country_id(), e.state_id(), e.city_id(), e.country_key(), e.state_key(), e.city_name());
     }
     for (int i = 0; i < geo.ipsv6_size(); i++) {
         const auto& e = geo.ipsv6(i);
         IPv6 from(e.from_hi(), e.from_lo());
         IPv6 to(e.to_hi(), e.to_lo());
-        db->addRange(from, to, e.country_id(), e.state_id(), e.city_id(), CString(e.country_key()), CString(e.state_key()), CString(e.city_name()));
+        db->addRange(from, to, e.country_id(), e.state_id(), e.city_id(), e.country_key(), e.state_key(), e.city_name());
     }
     logInfo("geodb loaded in %f sec", (double) (Utils::nowMicros() - begin) / 1000000.0);
     return db;

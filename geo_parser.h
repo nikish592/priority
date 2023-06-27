@@ -56,11 +56,11 @@ private:
         unsigned int countryId;
         unsigned int stateId;
         unsigned int cityId;
-        CString country_key;
-        CString state_key;
-        CString city_name;
+        std::string countryKey;
+        std::string stateKey;
+        std::string cityName;
 
-        Location() : countryId(0), stateId(0), cityId(0), country_key(""), state_key(""), city_name("") {}
+        Location() : countryId(0), stateId(0), cityId(0) {}
     };
 
     void initConfig(const rapidjson::Document& config);
