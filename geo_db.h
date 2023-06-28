@@ -71,8 +71,8 @@ public:
 
         Element() : countryId(0), stateId(0), cityId(0) {}
 
-        Element(unsigned int countryId, unsigned int stateId, unsigned int cityId, const std::string& country, const std::string& state, const std::string& city)
-            : countryId(countryId), stateId(stateId), cityId(cityId), countryKey(country), stateKey(state), cityName(city) {}
+        Element(unsigned int countryId, unsigned int stateId, unsigned int cityId, const std::string& countryKey, const std::string& stateKey, const std::string& cityName)
+            : countryId(countryId), stateId(stateId), cityId(cityId), countryKey(countryKey), stateKey(stateKey), cityName(cityName) {}
 
         void clear() {
             countryId = 0;

@@ -271,7 +271,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                 state.store = true;
                 states_[key] = state;
                 location.stateId = state.id;
-                location.stateKey = std::string(values[6].data, values[6].size);
+                location.stateKey.assign(values[6].data, values[6].size);
             } else {
                 if (!values[7].empty()) {
                     if (values[7] != istate->second.name) {
@@ -284,7 +284,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                     }
                 }
                 location.stateId = istate->second.id;
-                location.stateKey = values[6].data;
+                location.stateKey.assign(values[6].data, values[6].size);
             }
             /*  process city  */
             if (values[10].size != 0) {
@@ -301,7 +301,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                     city.name.assign(values[10].data, values[10].size);
                     if (en) {
                         city.nameEn.assign(values[10].data, values[10].size);
-                        location.cityName = city.nameEn;
+                        location.cityName.assign(city.nameEn, city.nameEn.size());
                     }
                     city.weight = city.id;
                     city.store = true;
@@ -316,7 +316,7 @@ GeoParser::loadLocations(const std::string& f, bool en)
                         if (en && values[10] != icity->second.nameEn) {
                             icity->second.nameEn.assign(values[10].data, values[10].size);
                             icity->second.store = true;
-                            location.cityName = icity->second.nameEn;
+                            location.cityName.assign(icity->second.nameEn, icity->second.nameEn.size());
                         }
                     }
                     location.cityId = icity->second.id;
