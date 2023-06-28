@@ -294,6 +294,7 @@ private:
 
     explicit GeoDb(const rapidjson::Document& config);
     GeoDb(const GeoDb&);
+
     GeoDb& operator=(const GeoDb&);
     ~GeoDb();
     void initConfig(const rapidjson::Document& config);

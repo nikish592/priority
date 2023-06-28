@@ -61,7 +61,7 @@ GeoParser::run()
     /**/
     begin = Utils::nowMicros();
     saveToDb();
-    logInfo("saved to db in %f sec", (double) (Utils::nowMicros() - begin) / 1000000.0);
+    logInfo("saved to db in %f sec", (double) (Utils::nowMicros() - begin) / 1000000.0);    
 }
 
 void
